@@ -5,59 +5,90 @@ import {onMounted, ref} from "vue";
 import {Stencil} from "@antv/x6-plugin-stencil";
 const data = ref({
   nodes: [
-    {
-      id: 'node1',
-      shape: 'rect',
-      x: 40,
-      y: 40,
-      width: 100,
-      height: 40,
-      label: 'hello',
-      attrs: {
-        body: {
-          stroke: '#8f8f8f',
-          strokeWidth: 1,
-          fill: '#fff',
-          rx: 6,
-          ry: 6,
-        },
-      },
-    },
-    {
-      id: 'node2',
-      shape: 'rect',
-      x: 160,
-      y: 180,
-      width: 100,
-      height: 40,
-      label: 'world',
-      attrs: {
-        body: {
-          stroke: '#8f8f8f',
-          strokeWidth: 1,
-          fill: '#fff',
-          rx: 6,
-          ry: 6,
-        },
-      },
-    },
+
   ],
   edges: [
-    {
-      shape: 'edge',
-      source: 'node1',
-      target: 'node2',
-      label: 'x6',
+
+  ],
+})
+const ports = {
+  groups: {
+    top: {
+      position: 'top',
       attrs: {
-        line: {
-          stroke: '#8f8f8f',
+        circle: {
+          r: 4,
+          magnet: true,
+          stroke: '#5F95FF',
           strokeWidth: 1,
+          fill: '#fff',
+          style: {
+            // visibility: 'hidden',
+          },
         },
       },
     },
+    right: {
+      position: 'right',
+      attrs: {
+        circle: {
+          r: 4,
+          magnet: true,
+          stroke: '#5F95FF',
+          strokeWidth: 1,
+          fill: '#fff',
+          style: {
+            // visibility: 'hidden',
+          },
+        },
+      },
+    },
+    bottom: {
+      position: 'bottom',
+      attrs: {
+        circle: {
+          r: 4,
+          magnet: true,
+          stroke: '#5F95FF',
+          strokeWidth: 1,
+          fill: '#fff',
+          style: {
+            // visibility: 'hidden',
+          },
+        },
+      },
+    },
+    left: {
+      position: 'left',
+      attrs: {
+        circle: {
+          r: 4,
+          magnet: true,
+          stroke: '#5F95FF',
+          strokeWidth: 1,
+          fill: '#fff',
+          style: {
+            // visibility: 'hidden',
+          },
+        },
+      },
+    },
+  },
+  items: [
+    {
+      group: 'top',
+    },
+    {
+      group: 'right',
+    },
+    {
+      group: 'bottom',
+    },
+    {
+      group: 'left',
+    },
   ],
-})
-
+}
 // 画布
 const graph = ref()
 // 模板
@@ -86,6 +117,48 @@ onMounted(() => {
       ],
     },
   })
+  Graph.registerNode(
+    'custom-rect',
+    {
+      inherit: 'rect',
+      width: 100,
+      height: 40,
+      attrs: {
+        body: {
+          strokeWidth: 1,
+          stroke: '#5F95FF',
+          fill: '#EFF4FF',
+        },
+        text: {
+          fontSize: 12,
+          fill: '#262626',
+        },
+      },
+      ports: { ...ports },
+    },
+    true,
+  )
+  Graph.registerNode(
+    'custom-circle',
+    {
+      inherit: 'circle',
+      width: 100,
+      height: 40,
+      attrs: {
+        body: {
+          strokeWidth: 1,
+          stroke: '#5F95FF',
+          fill: '#EFF4FF',
+        },
+        text: {
+          fontSize: 12,
+          fill: '#262626',
+        },
+      },
+      ports: { ...ports },
+    },
+    true,
+  )
   graph.value.on('node:click', ({ e, x, y, node, view }) => {
     console.log(e)
     console.log(x)
@@ -105,29 +178,62 @@ onMounted(() => {
   stencil.value = new Stencil({
     title: '流程节点',
     target: graph.value,
-    stencilGraphWidth: 200,
-    stencilGraphHeight: 180,
+    collapsable: true,
+    stencilGraphWidth: 300,
+    stencilGraphHeight: 400,
     groups: [
       {
+        title: '静态节点',
         name: 'group1',
       },
       {
+        title: '动态节点',
         name: 'group2',
       },
     ],
   })
   document.getElementById('stencil')!.appendChild(stencil.value.container)
   const rect1 = graph.value.createNode({
-    shape: 'rect',
-    width: 100,
-    height: 40,
+    label: '开始',
+    shape: 'custom-circle',
   })
   const rect2 = graph.value.createNode({
-    shape: 'rect',
-    width: 100,
-    height: 40,
+    label: '结束',
+    shape: 'custom-circle',
+  })
+  const rect3 = graph.value.createNode({
+    label: '用户动作',
+    shape: 'custom-rect',
+    // ports: {
+    //   items: [
+    //     {
+    //       // id: 'port_1',
+    //       group: 'group1',
+    //     },
+    //   ]
+    // },
+    // ports: {
+    //   groups: {
+    //     top: {
+    //       position: 'top',
+    //       group: 'top',
+    //       attrs: {
+    //         circle: {
+    //           magnet: true,
+    //           stroke: '#8f8f8f',
+    //           r: 5,
+    //         },
+    //       },
+    //     },
+    //   },
+    // },
+  })
+  const rect4 = graph.value.createNode({
+    label: '系统任务',
+    shape: 'custom-rect',
   })
   stencil.value.load([rect1, rect2], 'group1')
+  stencil.value.load([rect3, rect4], 'group2')
 })
 </script>
 
@@ -135,6 +241,14 @@ onMounted(() => {
   <div id="workflow-designer">
     <div id="stencil"></div>
     <div id="container"></div>
+    <div id="props-panel">
+      <h2>Node Props</h2>
+      <label>处理人</label><a-input />
+      <label>XXX</label><a-input />
+      <label>XXX</label><a-input />
+      <label>XXX</label><a-input />
+      <label>XXX</label><a-input />
+    </div>
   </div>
 </template>
 
@@ -144,35 +258,25 @@ onMounted(() => {
   height: 100%;
   width: 100%;
   border: 1px solid #dfe3e8;
+  #stencil {
+    width: 400px;
+    height: 100%;
+    position: relative;
+    border-right: 1px solid #dfe3e8;
+  }
+  #container {
+    width: calc(100% - 400px);
+    height: 100%;
+  }
+  #props-panel {
+    padding: 10px;
+    width: 400px;
+    height: 600px;
+    background-color: lightgray;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
 }
-#stencil {
-  width: 400px;
-  height: 100%;
-  position: relative;
-  border-right: 1px solid #dfe3e8;
-}
-#container {
-  width: calc(100% - 400px);
-  height: 100%;
-}
-
-//#workflow-designer {
-//  display: flex;
-//  padding: 0;
-//
-//  #stencil {
-//    position: relative;
-//    width: 200px;
-//    border: 1px solid #f0f0f0;
-//  }
-//
-//  #container {
-//    flex: 1;
-//    height: 380px;
-//    margin-right: 8px;
-//    margin-left: 8px;
-//    box-shadow: 0 0 10px 1px #e9e9e9;
-//  }
-//}
 
 </style>
