@@ -86,6 +86,20 @@ onMounted(() => {
       ],
     },
   })
+  graph.value.on('node:click', ({ e, x, y, node, view }) => {
+    console.log(e)
+    console.log(x)
+    console.log(y)
+    console.log(node)
+    console.log(view)
+  })
+  graph.value.on('cell:added', ({ cell, index, options }) => {
+    console.log(cell)
+    console.log(index)
+    console.log(options)
+  })
+
+
   graph.value.fromJSON(data.value)
   graph.value.centerContent()
   stencil.value = new Stencil({
