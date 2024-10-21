@@ -247,7 +247,7 @@ onMounted(() => {
       <label>XXX</label><a-input />
       <label>XXX</label><a-input />
       <label>XXX</label><a-input />
-      <label>XXX</label><a-input />
+      <a-button @click="() => console.log(graph)">测试</a-button>
     </div>
   </div>
 </template>
