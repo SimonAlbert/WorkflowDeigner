@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { Graph } from '@antv/x6'
+import { Graph, Shape } from '@antv/x6'
 import {onMounted, ref} from "vue";
 import {Stencil} from "@antv/x6-plugin-stencil";
 const data = ref({
@@ -100,7 +100,43 @@ onMounted(() => {
     background: {
       color: '#F2F7FA',
     },
-    // autoResize: true,
+    connecting: {
+      router: 'manhattan',
+      connector: {
+        name: 'rounded',
+        args: {
+          radius: 8,
+          startDirections: ['right'],
+          endDirections: ['left'],
+        },
+      },
+      anchor: 'center',
+      connectionPoint: 'anchor',
+      allowBlank: false,
+      snap: {
+        radius: 20,
+      },
+      createEdge() {
+        return new Shape.Edge({
+          attrs: {
+            line: {
+              stroke: '#A2B1C3',
+              strokeWidth: 2,
+              targetMarker: {
+                name: 'block',
+                width: 12,
+                height: 8,
+              },
+            },
+          },
+          zIndex: 0,
+        })
+      },
+      validateConnection({ targetMagnet }) {
+        return !!targetMagnet
+      },
+    },
+    autoResize: true,
     grid: {
       visible: true,
       type: 'doubleMesh',
